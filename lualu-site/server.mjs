@@ -12,6 +12,9 @@ const PROJECTS_FILE = path.join(DATA_DIR, 'projects.json');
 const CONTACTS_FILE = path.join(DATA_DIR, 'contact-submissions.json');
 const PORT = Number(process.env.PORT || 3000);
 const WEBHOOK = process.env.CONTACT_WEBHOOK_URL || '';
+const RESEND_API_KEY = process.env.RESEND_API_KEY || '';
+const CONTACT_TO_EMAIL = process.env.CONTACT_TO_EMAIL || '';
+const CONTACT_FROM_EMAIL = process.env.CONTACT_FROM_EMAIL || 'Lua Lu <onboarding@resend.dev>';
 
 await mkdir(DATA_DIR, { recursive: true });
 if (!existsSync(CONTACTS_FILE)) await writeFile(CONTACTS_FILE, '[]', 'utf8');
@@ -49,6 +52,66 @@ function validEmail(email) {
 
 async function readJson(file) {
   return JSON.parse(await readFile(file, 'utf8'));
+}
+
+function escapeHtml(value = '') {
+  return String(value)
+    .replaceAll('&', '&amp;')
+    .replaceAll('<', '&lt;')
+    .replaceAll('>', '&gt;')
+    .replaceAll('"', '&quot;')
+    .replaceAll("'", '&#039;');
+}
+
+async function sendContactEmail(submission) {
+  if (!RESEND_API_KEY || !CONTACT_TO_EMAIL) return false;
+
+  const safe = Object.fromEntries(
+    Object.entries(submission).map(([key, value]) => [key, escapeHtml(value)])
+  );
+
+  const response = await fetch('https://api.resend.com/emails', {
+    method: 'POST',
+    headers: {
+      'Authorization': `Bearer ${RESEND_API_KEY}`,
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({
+      from: CONTACT_FROM_EMAIL,
+      to: [CONTACT_TO_EMAIL],
+      reply_to: submission.email,
+      subject: `Novo contato pelo site | ${submission.name}`,
+      text: [
+        `Novo contato recebido pelo site da Lua Lu`,
+        '',
+        `Nome: ${submission.name}`,
+        `E-mail: ${submission.email}`,
+        `Marca / negócio: ${submission.brand || 'Não informado'}`,
+        `Tipo de projeto: ${submission.projectType || 'Não informado'}`,
+        '',
+        'Mensagem:',
+        submission.message
+      ].join('\n'),
+      html: `
+        <div style="font-family:Arial,sans-serif;line-height:1.6;color:#173D6B">
+          <h2 style="margin:0 0 20px">Novo contato pelo site da Lua Lu</h2>
+          <p><strong>Nome:</strong> ${safe.name}</p>
+          <p><strong>E-mail:</strong> ${safe.email}</p>
+          <p><strong>Marca / negócio:</strong> ${safe.brand || 'Não informado'}</p>
+          <p><strong>Tipo de projeto:</strong> ${safe.projectType || 'Não informado'}</p>
+          <p><strong>Mensagem:</strong></p>
+          <p style="white-space:pre-wrap">${safe.message}</p>
+        </div>
+      `
+    })
+  });
+
+  if (!response.ok) {
+    const details = await response.text();
+    throw new Error(`RESEND_ERROR ${response.status}: ${details.slice(0, 500)}`);
+  }
+
+  return true;
 }
 
 async function collectBody(req, maxBytes = 50_000) {
@@ -107,9 +170,22 @@ async function api(req, res, url) {
     const submission = {
       id: crypto.randomUUID(), createdAt: new Date().toISOString(), name, email, brand, projectType, message
     };
-    const submissions = await readJson(CONTACTS_FILE);
-    submissions.push(submission);
-    await writeFile(CONTACTS_FILE, JSON.stringify(submissions, null, 2), 'utf8');
+    let delivered = false;
+
+    if (RESEND_API_KEY && CONTACT_TO_EMAIL) {
+      try {
+        delivered = await sendContactEmail(submission);
+      } catch (error) {
+        console.error('Falha ao enviar contato por e-mail:', error.message);
+        return json(res, 502, { error: 'Não foi possível enviar sua mensagem agora. Tente novamente em alguns minutos.' });
+      }
+    }
+
+    if (!delivered) {
+      const submissions = await readJson(CONTACTS_FILE);
+      submissions.push(submission);
+      await writeFile(CONTACTS_FILE, JSON.stringify(submissions, null, 2), 'utf8');
+    }
 
     if (WEBHOOK) {
       try {
@@ -118,7 +194,13 @@ async function api(req, res, url) {
         await appendFile(path.join(DATA_DIR, 'webhook-errors.log'), `${new Date().toISOString()} ${error.message}\n`);
       }
     }
-    return json(res, 201, { ok: true, message: 'Mensagem recebida. Obrigada por contar seu projeto.' });
+
+    return json(res, 201, {
+      ok: true,
+      message: delivered
+        ? 'Mensagem enviada. Obrigada por contar seu projeto.'
+        : 'Mensagem recebida. Obrigada por contar seu projeto.'
+    });
   }
 
   if (url.pathname.startsWith('/api/')) return json(res, 404, { error: 'Endpoint não encontrado.' });
