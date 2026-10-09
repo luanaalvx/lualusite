@@ -1,0 +1,41 @@
+[
+  {
+    "slug": "meu-bom",
+    "name": "Meu Bom",
+    "year": "2025",
+    "services": ["Estratégia", "Social media", "Audiovisual", "Comunicação interna"],
+    "summary": "Uma observação recorrente sobre a experiência de compra virou uma campanha de combos e materiais de apoio para a equipe.",
+    "context": "Na comunicação do Meu Bom, um dos objetivos era contribuir para o aumento de vendas sem transformar o conteúdo em uma sucessão de promoções desconectadas.",
+    "challenge": "Clientes demonstravam incômodo com o valor final das compras e, em alguns casos, retiravam itens para reduzir o preço.",
+    "insight": "A partir da escuta do dia a dia e de uma referência observada fora do trabalho, surgiu a ideia de criar combos fechados que reorganizassem a percepção de valor sem simplesmente reduzir preços de forma indiscriminada.",
+    "process": "A proposta foi levada à gestão, os produtos foram pensados para composição dos combos e a comunicação foi desdobrada em campanha e orientação para atendimento. Também foi criado um documento editável de perguntas frequentes para apoiar as atendentes no contato com clientes.",
+    "result": "O projeto conecta observação, estratégia, conteúdo e operação, mostrando como a comunicação pode responder a uma dor real do público e dialogar com o negócio.",
+    "accent": "terracotta"
+  },
+  {
+    "slug": "cannect",
+    "name": "Cannect",
+    "year": "2022–2023",
+    "services": ["Social media", "Conteúdo", "Captação de vídeo", "Testes de formato"],
+    "summary": "Conteúdo digital pensado a partir de testes de linguagem, observação de audiência e produção audiovisual para redes sociais.",
+    "context": "A atuação reuniu planejamento e execução de conteúdo para uma marca inserida em um tema que exige clareza, responsabilidade e capacidade de traduzir assuntos complexos.",
+    "challenge": "Encontrar formatos capazes de informar e gerar identificação com diferentes públicos sem perder clareza.",
+    "insight": "Testar formatos e observar respostas do público ajudou a entender quais linguagens aproximavam melhor a marca das pessoas.",
+    "process": "O trabalho envolveu social media, produção de conteúdo, captação de vídeo e elaboração de briefings detalhados, mantendo uma ponte constante entre estratégia e execução.",
+    "result": "A experiência consolidou uma forma de trabalhar baseada em contexto, teste, aprendizado e clareza de briefing.",
+    "accent": "pool"
+  },
+  {
+    "slug": "ninja-esporte-clube",
+    "name": "NINJA Esporte Clube",
+    "year": "2026",
+    "services": ["Cobertura colaborativa", "Conteúdo", "Jornalismo"],
+    "summary": "Participação colaborativa em cobertura esportiva, unindo olhar jornalístico, repertório digital e produção de conteúdo em tempo real.",
+    "context": "Projeto colaborativo ligado à cobertura da Copa do Mundo de 2026 no ecossistema da Mídia NINJA / NINJA Esporte Clube.",
+    "challenge": "Produzir conteúdo relevante dentro de uma cobertura dinâmica, com múltiplas narrativas e alto volume de acontecimentos.",
+    "insight": "O repertório jornalístico e a experiência em redes permitem observar além do placar e encontrar histórias, comportamentos e contextos que ampliam a cobertura.",
+    "process": "A atuação combina apuração, seleção de pautas, produção de conteúdo e adaptação para linguagens digitais em um fluxo colaborativo.",
+    "result": "O projeto reforça a interseção entre jornalismo, cultura digital e comunicação em tempo real presente na trajetória da Lua Lu.",
+    "accent": "yellow"
+  }
+]
