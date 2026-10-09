@@ -4,7 +4,6 @@ import { existsSync } from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import crypto from 'node:crypto';
-import tls from 'node:tls';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const PUBLIC_DIR = path.join(__dirname, 'public');
@@ -13,9 +12,9 @@ const PROJECTS_FILE = path.join(DATA_DIR, 'projects.json');
 const CONTACTS_FILE = path.join(DATA_DIR, 'contact-submissions.json');
 const PORT = Number(process.env.PORT || 3000);
 const WEBHOOK = process.env.CONTACT_WEBHOOK_URL || '';
-const EMAIL_USER = process.env.EMAIL_USER || '';
-const EMAIL_APP_PASSWORD = (process.env.EMAIL_APP_PASSWORD || '').replace(/\s+/g, '');
-const CONTACT_TO_EMAIL = process.env.CONTACT_TO_EMAIL || EMAIL_USER;
+const RESEND_API_KEY = process.env.RESEND_API_KEY || '';
+const CONTACT_TO_EMAIL = process.env.CONTACT_TO_EMAIL || '';
+const CONTACT_FROM_EMAIL = process.env.CONTACT_FROM_EMAIL || 'Lua Lu <onboarding@resend.dev>';
 
 await mkdir(DATA_DIR, { recursive: true });
 if (!existsSync(CONTACTS_FILE)) await writeFile(CONTACTS_FILE, '[]', 'utf8');
@@ -55,119 +54,64 @@ async function readJson(file) {
   return JSON.parse(await readFile(file, 'utf8'));
 }
 
-function headerSafe(value = '') {
-  return String(value).replace(/[\r\n]+/g, ' ').trim();
-}
-
-function readSmtpResponse(socket, timeoutMs = 10000) {
-  return new Promise((resolve, reject) => {
-    let buffer = '';
-    const timer = setTimeout(() => {
-      cleanup();
-      reject(new Error('SMTP_TIMEOUT'));
-    }, timeoutMs);
-
-    function cleanup() {
-      clearTimeout(timer);
-      socket.off('data', onData);
-      socket.off('error', onError);
-    }
-
-    function onError(error) {
-      cleanup();
-      reject(error);
-    }
-
-    function onData(chunk) {
-      buffer += chunk.toString('utf8');
-      const lines = buffer.split('\r\n').filter(Boolean);
-      const last = lines.at(-1) || '';
-      if (/^\d{3} /.test(last)) {
-        cleanup();
-        resolve({ code: Number(last.slice(0, 3)), text: buffer });
-      }
-    }
-
-    socket.on('data', onData);
-    socket.on('error', onError);
-  });
-}
-
-async function smtpCommand(socket, command, expectedCodes) {
-  if (command !== null) socket.write(command + '\r\n');
-  const response = await readSmtpResponse(socket);
-  const allowed = Array.isArray(expectedCodes) ? expectedCodes : [expectedCodes];
-  if (!allowed.includes(response.code)) {
-    throw new Error(`SMTP_${response.code}: ${response.text.trim().slice(0, 500)}`);
-  }
-  return response;
+function escapeHtml(value = '') {
+  return String(value)
+    .replaceAll('&', '&amp;')
+    .replaceAll('<', '&lt;')
+    .replaceAll('>', '&gt;')
+    .replaceAll('"', '&quot;')
+    .replaceAll("'", '&#039;');
 }
 
 async function sendContactEmail(submission) {
-  if (!EMAIL_USER || !EMAIL_APP_PASSWORD || !CONTACT_TO_EMAIL) return false;
+  if (!RESEND_API_KEY || !CONTACT_TO_EMAIL) return false;
 
-  const socket = tls.connect({
-    host: 'smtp.gmail.com',
-    port: 465,
-    servername: 'smtp.gmail.com',
-    rejectUnauthorized: true
+  const safe = Object.fromEntries(
+    Object.entries(submission).map(([key, value]) => [key, escapeHtml(value)])
+  );
+
+  const response = await fetch('https://api.resend.com/emails', {
+    method: 'POST',
+    headers: {
+      'Authorization': `Bearer ${RESEND_API_KEY}`,
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({
+      from: CONTACT_FROM_EMAIL,
+      to: [CONTACT_TO_EMAIL],
+      reply_to: submission.email,
+      subject: `Novo contato pelo site | ${submission.name}`,
+      text: [
+        'Novo contato recebido pelo site da Lua Lu',
+        '',
+        `Nome: ${submission.name}`,
+        `E-mail: ${submission.email}`,
+        `Marca / negócio: ${submission.brand || 'Não informado'}`,
+        `Tipo de projeto: ${submission.projectType || 'Não informado'}`,
+        '',
+        'Mensagem:',
+        submission.message
+      ].join('\n'),
+      html: `
+        <div style="font-family:Arial,sans-serif;line-height:1.6;color:#173D6B">
+          <h2 style="margin:0 0 20px">Novo contato pelo site da Lua Lu</h2>
+          <p><strong>Nome:</strong> ${safe.name}</p>
+          <p><strong>E-mail:</strong> ${safe.email}</p>
+          <p><strong>Marca / negócio:</strong> ${safe.brand || 'Não informado'}</p>
+          <p><strong>Tipo de projeto:</strong> ${safe.projectType || 'Não informado'}</p>
+          <p><strong>Mensagem:</strong></p>
+          <p style="white-space:pre-wrap">${safe.message}</p>
+        </div>
+      `
+    })
   });
 
-  await new Promise((resolve, reject) => {
-    socket.once('secureConnect', resolve);
-    socket.once('error', reject);
-    socket.setTimeout(15000, () => {
-      socket.destroy();
-      reject(new Error('SMTP_SOCKET_TIMEOUT'));
-    });
-  });
-
-  try {
-    await smtpCommand(socket, null, 220);
-    await smtpCommand(socket, 'EHLO lualu-site', 250);
-    await smtpCommand(socket, 'AUTH LOGIN', 334);
-    await smtpCommand(socket, Buffer.from(EMAIL_USER).toString('base64'), 334);
-    await smtpCommand(socket, Buffer.from(EMAIL_APP_PASSWORD).toString('base64'), 235);
-    await smtpCommand(socket, `MAIL FROM:<${EMAIL_USER}>`, 250);
-    await smtpCommand(socket, `RCPT TO:<${CONTACT_TO_EMAIL}>`, [250, 251]);
-    await smtpCommand(socket, 'DATA', 354);
-
-    const subject = `Novo contato pelo site | ${headerSafe(submission.name)}`;
-    const encodedSubject = `=?UTF-8?B?${Buffer.from(subject, 'utf8').toString('base64')}?=`;
-    const body = [
-      'Novo contato recebido pelo site da Lua Lu',
-      '',
-      `Nome: ${submission.name}`,
-      `E-mail: ${submission.email}`,
-      `Marca / negócio: ${submission.brand || 'Não informado'}`,
-      `Tipo de projeto: ${submission.projectType || 'Não informado'}`,
-      '',
-      'Mensagem:',
-      submission.message
-    ].join('\r\n').replace(/^\./gm, '..');
-
-    const message = [
-      `From: Lua Lu <${EMAIL_USER}>`,
-      `To: ${CONTACT_TO_EMAIL}`,
-      `Reply-To: ${headerSafe(submission.email)}`,
-      `Subject: ${encodedSubject}`,
-      `Date: ${new Date().toUTCString()}`,
-      'MIME-Version: 1.0',
-      'Content-Type: text/plain; charset=UTF-8',
-      'Content-Transfer-Encoding: 8bit',
-      '',
-      body
-    ].join('\r\n');
-
-    socket.write(message + '\r\n.\r\n');
-    const sent = await readSmtpResponse(socket);
-    if (sent.code !== 250) throw new Error(`SMTP_${sent.code}: ${sent.text.trim().slice(0, 500)}`);
-
-    socket.write('QUIT\r\n');
-    return true;
-  } finally {
-    socket.end();
+  if (!response.ok) {
+    const details = await response.text();
+    throw new Error(`RESEND_ERROR ${response.status}: ${details.slice(0, 500)}`);
   }
+
+  return true;
 }
 
 async function collectBody(req, maxBytes = 50_000) {
@@ -236,11 +180,11 @@ async function api(req, res, url) {
 
     let delivered = false;
 
-    if (EMAIL_USER && EMAIL_APP_PASSWORD && CONTACT_TO_EMAIL) {
+    if (RESEND_API_KEY && CONTACT_TO_EMAIL) {
       try {
         delivered = await sendContactEmail(submission);
       } catch (error) {
-        console.error('Falha ao enviar contato por Gmail SMTP:', error.message);
+        console.error('Falha ao enviar contato por e-mail:', error.message);
         return json(res, 502, { error: 'Não foi possível enviar sua mensagem agora. Tente novamente em alguns minutos.' });
       }
     }
