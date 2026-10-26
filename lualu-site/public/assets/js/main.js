@@ -19,7 +19,7 @@ async function loadProjects(){
   const host = $('[data-project-list]'); if(!host) return;
   try{
     const projects = await fetch('/api/projects').then(r => r.json());
-    host.innerHTML = projects.slice(0,3).map(p => `<article class="project-card reveal" data-accent="${p.accent || 'pool'}"><div class="project-art" aria-hidden="true"></div><div class="project-copy"><p class="project-meta">${p.year} · ${p.services.join(' · ')}</p><h3>${p.name}</h3><p>${p.summary}</p><a class="text-link" href="/projetos/${p.slug}">Ver projeto ↗</a></div></article>`).join('');
+    host.innerHTML = projects.slice(0,4).map(p => `<article class="project-card reveal" data-accent="${p.accent || 'pool'}"><div class="project-art" aria-hidden="true"></div><div class="project-copy"><p class="project-meta">${p.year} · ${p.services.join(' · ')}</p><h3>${p.name}</h3><p>${p.summary}</p><a class="text-link" href="/projetos/${p.slug}">Ver projeto ↗</a></div></article>`).join('');
     $$('.project-card.reveal',host).forEach(el=>io.observe(el));
   }catch{host.innerHTML='<p>Os projetos estão temporariamente indisponíveis.</p>'}
 }
