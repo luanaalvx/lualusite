@@ -140,13 +140,21 @@ async function api(req, res, url) {
 
   if (req.method === 'GET' && url.pathname === '/api/projects') {
     const projects = await readJson(PROJECTS_FILE);
-    return json(res, 200, projects.map(({ context, challenge, insight, process, result, ...card }) => card));
+
+    return json(res, 200,
+      projects
+        .filter(p => p.published !== false)
+        .map(({ context, challenge, insight, process, result, ...card }) => card)
+    );
   }
 
   if (req.method === 'GET' && url.pathname.startsWith('/api/projects/')) {
     const slug = decodeURIComponent(url.pathname.split('/').pop());
     const projects = await readJson(PROJECTS_FILE);
-    const project = projects.find(p => p.slug === slug);
+
+    const project = projects.find(
+      p => p.slug === slug && p.published !== false
+    );
     return project ? json(res, 200, project) : json(res, 404, { error: 'Projeto não encontrado.' });
   }
 

@@ -1,6 +1,40 @@
 [
   {
+    "slug": "tfor-reis",
+    "published": true,
+    "name": "TFOR Reis",
+    "year": "2026",
+    "services": [
+      "Identidade visual",
+      "Estratégia de marca",
+      "Aplicação institucional"
+    ],
+    "summary": "Do nome à identidade: desenvolvemos o universo visual da TFOR a partir de uma imersão estratégica sobre a história, a atuação e o público da empresa. O resultado equilibra precisão técnica, confiança e proximidade, com aplicação em cartão de visitas.",
+    "context": "A empresa já tinha um nome, mas ainda não possuía uma identidade visual definida.",
+    "challenge": "Criar uma identidade visual para a atuação tributária, fiscal, contábil e financeira que transmitisse confiança e precisão técnica, sem perder proximidade.",
+    "insight": "A imersão na origem, no público e no posicionamento da empresa orientou decisões de linguagem e identidade visual.",
+    "process": "Realizamos uma reunião de imersão com a cliente para compreender o negócio e desenvolvemos, em conjunto, a paleta institucional, o sistema tipográfico e os elementos gráficos.",
+    "result": "Identidade visual desenvolvida e aplicada em cartão de visitas.",
+    "accent": "purple",
+    "projectNumber": "01",
+    "category": "Identidade visual",
+    "intro": [
+      "A TFOR atua nas áreas tributária, fiscal, contábil e financeira. O projeto desenvolvido pela LuaLu Comunicação partiu de um ponto inicial: a empresa já tinha um nome, mas ainda não possuía uma identidade visual definida.",
+      "A partir de uma reunião de imersão para compreender a origem da empresa, seu público e sua atuação, construímos, em conjunto com a cliente, uma identidade que equilibra precisão técnica, confiança e proximidade.",
+      "A identidade foi desenvolvida com uma paleta de cores institucionais, sistema tipográfico e elementos gráficos próprios, pensados para transmitir credibilidade sem perder a clareza e o acolhimento. O projeto teve como aplicação o cartão de visitas da empresa."
+    ],
+    "deliverable": "Identidade visual e aplicação em cartão de visitas.",
+    "gallery": [
+      {
+        "src": "/assets/img/tfor-cartao-visitas.png",
+        "alt": "Mockup do cartão de visitas da TFOR Reis",
+        "caption": "Aplicação da identidade visual em cartão de visitas."
+      }
+    ]
+  },
+  {
     "slug": "meu-bom",
+    "published": false,
     "name": "Meu Bom",
     "year": "2025",
     "services": [
@@ -19,6 +53,7 @@
   },
   {
     "slug": "cannect",
+    "published": false,
     "name": "Cannect",
     "year": "2022–2023",
     "services": [
@@ -37,6 +72,7 @@
   },
   {
     "slug": "ninja-esporte-clube",
+    "published": false,
     "name": "NINJA Esporte Clube",
     "year": "2026",
     "services": [
