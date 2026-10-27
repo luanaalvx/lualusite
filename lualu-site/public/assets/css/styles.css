@@ -605,7 +605,7 @@ img {
     font-family: 'Anybody';
     font-size: clamp(64px, 9vw, 145px);
     line-height: .77;
-    letter-spacing: 0.04em;
+    letter-spacing: 0.06em;
     margin: 0;
     font-variation-settings: 'wdth' 72
 }
@@ -879,17 +879,21 @@ img {
     border-radius: 0 0 0 100%
 }
 
-.all-project-card[data-accent="purple"]:before {
-    background: var(--tfor-purple)
+
+/* TFOR Reis — página geral de projetos */
+
+.all-project-card[data-accent="purple"]::before {
+    background: var(--ocean);
 }
 
 .all-project-card[data-accent="purple"] h2 {
-    color: var(--tfor-purple)
+    color: var(--ocean);
 }
 
 .all-project-card[data-accent="purple"] .text-link {
-    text-decoration-color: var(--tfor-gold)
+    text-decoration-color: var(--pool);
 }
+
 
 .all-project-card h2 {
     font-family: 'Anybody';

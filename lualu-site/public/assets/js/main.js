@@ -89,42 +89,6 @@ async function loadProjects() {
   }
 }
 
-
-async function loadProjects() {
-  const host = $('[data-project-list]');
-  if (!host) return;
-  try {
-    const res = await fetch('/api/projects');
-    if (!res.ok) throw new Error('Não foi possível carregar os projetos.');
-    const projects = await res.json();
-    host.innerHTML = projects.map(p => {
-      const accent = escapeHtml(p.accent || 'pool');
-      const name = escapeHtml(p.name);
-      const category = escapeHtml(p.category || p.services[0] || 'Projeto');
-      const meta = p.projectNumber
-        ? `PROJETO ${escapeHtml(p.projectNumber)} · ${category}`
-        : `${escapeHtml(p.year)} · ${p.services.map(escapeHtml).join(' · ')}`;
-      // Sem foto real, mantém-se o grafismo decorativo genérico do site.
-      const art = p.coverImage
-        ? `<div class="project-art project-art--photo"><img src="${escapeHtml(p.coverImage)}" alt="${escapeHtml(p.coverAlt || name)}" loading="lazy"></div>`
-        : '<div class="project-art" aria-hidden="true"></div>';
-      return `
-        <article class="project-card reveal" data-accent="${accent}">
-          ${art}
-          <div class="project-copy">
-            <p class="project-meta">${meta}</p>
-            <h3>${name}</h3>
-            <p>${escapeHtml(p.summary)}</p>
-            <a class="text-link" href="/projetos/${encodeURIComponent(p.slug)}" aria-label="Ver projeto ${name}">Ver projeto ↗</a>
-          </div>
-        </article>`;
-    }).join('');
-    $$('.project-card.reveal', host).forEach(el => io.observe(el));
-  } catch {
-    host.innerHTML = '<p>Os projetos estão temporariamente indisponíveis.</p>';
-  }
-}
-
 loadProjects();
 
 const form = $('[data-contact-form]');
@@ -141,4 +105,3 @@ form?.addEventListener('submit', async e => {
 });
 
 $$('[data-year]').forEach(el => el.textContent = new Date().getFullYear());
-
