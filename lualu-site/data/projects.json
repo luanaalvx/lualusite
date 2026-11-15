@@ -1,4 +1,5 @@
 [
+
   {
     "slug": "tfor-reis",
     "published": true,
@@ -7,28 +8,43 @@
     "services": [
       "Identidade visual",
       "Estratégia de marca",
-      "Aplicação institucional"
+      "Aplicação institucional",
+      "Design e desenvolvimento web"
     ],
-    "summary": "Do nome à identidade: desenvolvemos o universo visual da TFOR a partir de uma imersão estratégica sobre a história, a atuação e o público da empresa. O resultado equilibra precisão técnica, confiança e proximidade, com aplicação em cartão de visitas.",
-    "context": "A empresa já tinha um nome, mas ainda não possuía uma identidade visual definida.",
-    "challenge": "Criar uma identidade visual para a atuação tributária, fiscal, contábil e financeira que transmitisse confiança e precisão técnica, sem perder proximidade.",
-    "insight": "A imersão na origem, no público e no posicionamento da empresa orientou decisões de linguagem e identidade visual.",
-    "process": "Realizamos uma reunião de imersão com a cliente para compreender o negócio e desenvolvemos, em conjunto, a paleta institucional, o sistema tipográfico e os elementos gráficos.",
-    "result": "Identidade visual desenvolvida e aplicada em cartão de visitas.",
+    "summary": "Do nome à presença digital: desenvolvemos o universo visual da TFOR a partir de uma imersão estratégica sobre a história, a atuação e o público da empresa. A identidade equilibra precisão técnica, confiança e proximidade, com aplicações no cartão de visitas e na landing page institucional.",
+    "context": "A empresa já tinha um nome, mas ainda não possuía uma identidade visual definida ou uma presença digital própria.",
+    "challenge": "Construir uma identidade visual e uma presença digital para uma empresa de atuação tributária, fiscal, contábil e financeira, transmitindo confiança e precisão técnica sem perder proximidade.",
+    "insight": "A imersão na origem, no público e no posicionamento da empresa orientou as decisões de linguagem, identidade visual e presença digital.",
+    "process": "Realizamos uma reunião de imersão com a cliente para compreender o negócio e desenvolvemos, em conjunto, a paleta institucional, o sistema tipográfico e os elementos gráficos. A identidade foi desdobrada em um cartão de visitas e no design e desenvolvimento de uma landing page institucional.",
+    "result": "Uma identidade visual própria, aplicada em materiais institucionais físicos e digitais, estabelecendo uma presença de marca coerente em diferentes pontos de contato.",
     "accent": "purple",
     "projectNumber": "01",
-    "category": "Identidade visual",
+    "category": "Identidade visual e presença digital",
     "intro": [
       "A TFOR atua nas áreas tributária, fiscal, contábil e financeira. O projeto desenvolvido pela LuaLu Comunicação partiu de um ponto inicial: a empresa já tinha um nome, mas ainda não possuía uma identidade visual definida.",
       "A partir de uma reunião de imersão para compreender a origem da empresa, seu público e sua atuação, construímos, em conjunto com a cliente, uma identidade que equilibra precisão técnica, confiança e proximidade.",
-      "A identidade foi desenvolvida com uma paleta de cores institucionais, sistema tipográfico e elementos gráficos próprios, pensados para transmitir credibilidade sem perder a clareza e o acolhimento. O projeto teve como aplicação o cartão de visitas da empresa."
+      "A identidade foi desenvolvida com uma paleta de cores institucionais, sistema tipográfico e elementos gráficos próprios, pensados para transmitir credibilidade sem perder a clareza e o acolhimento.",
+      "O projeto se desdobrou na criação do cartão de visitas e no desenvolvimento de uma landing page institucional, conectando a presença física e digital da marca."
     ],
-    "deliverable": "Identidade visual e aplicação em cartão de visitas.",
+    
+    "deliverable": "Identidade visual, cartão de visitas e landing page institucional.",
+    "websiteUrl": "https://tforconsultoria.com.br",
+
     "gallery": [
       {
         "src": "/assets/img/tfor-cartao-visitas.png",
         "alt": "Mockup do cartão de visitas da TFOR Reis",
         "caption": "Aplicação da identidade visual em cartão de visitas."
+      },
+      {
+        "src": "/assets/img/tfor-landing-desktop.png",
+        "alt": "Landing page institucional da TFOR Reis em desktop",
+        "caption": "Design e desenvolvimento da landing page institucional."
+      },
+      {
+        "src": "/assets/img/tfor-landing-mobile.png",
+        "alt": "Landing page institucional da TFOR Reis em dispositivos móveis",
+        "caption": "Adaptação da experiência digital para dispositivos móveis."
       }
     ]
   },

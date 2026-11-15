@@ -47,7 +47,13 @@ async function run() {
     const gallery = images.length ? `<section class="case-gallery" aria-label="Imagens do projeto">${images.map(img =>
       `<figure><img src="${escapeHtml(img.src)}" alt="${escapeHtml(img.alt || p.name)}" loading="lazy">${img.caption ? `<figcaption>${escapeHtml(img.caption)}</figcaption>` : ''}</figure>`
     ).join('')}</section>` : '';
-    host.innerHTML = `${hero}${body}${gallery}<p class="case-back"><a class="button primary" href="/projetos">Ver outros projetos</a></p>`;
+    
+    const websiteLink = typeof p.websiteUrl === 'string' && p.websiteUrl.startsWith('https://')
+      ? `<p class="case-back"><a class="button primary" href="${escapeHtml(p.websiteUrl)}" target="_blank" rel="noopener noreferrer">Acessar o site ↗</a></p>`
+      : '';
+
+    host.innerHTML = `${hero}${body}${gallery}${websiteLink}<p class="case-back"><a class="button primary" href="/projetos">Ver outros projetos</a></p>`;
+
   } catch {
     host.innerHTML = '<section class="case-hero"><p class="eyebrow">404</p><h1>Projeto não encontrado.</h1><p><a class="button primary" href="/projetos">Voltar aos projetos</a></p></section>';
   }
